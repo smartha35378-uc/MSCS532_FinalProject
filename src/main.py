@@ -11,6 +11,7 @@ def main() -> None:
     project_root = Path(__file__).resolve().parent.parent
     output_csv = project_root / "results" / "benchmark_results.csv"
 
+    # Run the benchmark and print a simple summary table.
     rows = run_benchmarks(config=config, output_csv=output_csv)
 
     print("HPC Optimization Prototype: AoS vs SoA")

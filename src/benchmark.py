@@ -15,10 +15,12 @@ from utils import BenchmarkConfig, generate_particle_data, relative_close, summa
 
 
 def _clone_soa(soa: dict) -> dict:
+    # Copy arrays so each benchmark run starts from the same state.
     return {k: v.copy() for k, v in soa.items()}
 
 
 def _aos_to_arrays(aos: list) -> dict:
+    # Convert AoS output into arrays for an easy field-by-field comparison.
     return {
         "x": np.array([p["x"] for p in aos], dtype=np.float64),
         "y": np.array([p["y"] for p in aos], dtype=np.float64),
@@ -40,6 +42,7 @@ def benchmark_one_size(n: int, config: BenchmarkConfig) -> Dict[str, float]:
     soa_times: List[float] = []
 
     for _ in range(config.repeats):
+        # Time AoS on a fresh copy of the same input data.
         aos_particles = deepcopy(aos_base)
         start = time.perf_counter()
         aos_result = update_particles_aos(
@@ -52,6 +55,7 @@ def benchmark_one_size(n: int, config: BenchmarkConfig) -> Dict[str, float]:
         )
         aos_times.append(time.perf_counter() - start)
 
+        # Time SoA on an equivalent fresh copy.
         soa_particles = _clone_soa(soa_base)
         start = time.perf_counter()
         soa_result = update_particles_soa(
@@ -85,6 +89,7 @@ def benchmark_one_size(n: int, config: BenchmarkConfig) -> Dict[str, float]:
     )
     equivalent = validate_equivalence(aos_result, soa_result)
 
+    # Use the median to reduce the effect of noisy runs.
     aos_median = median(aos_times)
     soa_median = median(soa_times)
     speedup = summarize_speedup(aos_median, soa_median)
@@ -103,6 +108,7 @@ def run_benchmarks(config: BenchmarkConfig, output_csv: Path) -> List[Dict[str, 
 
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     with output_csv.open("w", newline="", encoding="utf-8") as f:
+        # Save results so they can be reused in the report.
         writer = csv.DictWriter(
             f,
             fieldnames=["n", "aos_median_seconds", "soa_median_seconds", "speedup_x", "equivalent"],

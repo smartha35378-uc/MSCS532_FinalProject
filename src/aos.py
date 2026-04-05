@@ -19,6 +19,7 @@ def update_particles_aos(
     """
     for _ in range(steps):
         for p in particles:
+            # Update velocity first, then apply it to position.
             p["vx"] = (p["vx"] + ax * dt / p["mass"]) * damping
             p["vy"] = (p["vy"] + ay * dt / p["mass"]) * damping
             p["x"] += p["vx"] * dt

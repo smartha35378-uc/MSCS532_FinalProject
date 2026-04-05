@@ -23,6 +23,7 @@ def update_particles_soa(
     mass = particles["mass"]
 
     for _ in range(steps):
+        # Apply the same update to every particle at once.
         vx[:] = (vx + ax * dt / mass) * damping
         vy[:] = (vy + ay * dt / mass) * damping
         x[:] = x + vx * dt

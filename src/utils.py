@@ -21,6 +21,7 @@ def generate_particle_data(n: int, seed: int = 42) -> Tuple[List[Dict[str, float
     """Generate equivalent datasets for AoS and SoA implementations."""
     rng = np.random.default_rng(seed)
 
+    # Build one shared set of values for both layouts.
     x = rng.random(n, dtype=np.float64)
     y = rng.random(n, dtype=np.float64)
     vx = rng.normal(0.0, 1.0, n).astype(np.float64)
@@ -39,6 +40,7 @@ def generate_particle_data(n: int, seed: int = 42) -> Tuple[List[Dict[str, float
     ]
 
     soa = {
+        # Keep each field in its own contiguous array.
         "x": x.copy(),
         "y": y.copy(),
         "vx": vx.copy(),

@@ -8,6 +8,7 @@ import unittest
 import numpy as np
 
 PROJECT_SRC = Path(__file__).resolve().parent.parent / "src"
+# Allow the tests to import modules directly from src/.
 sys.path.insert(0, str(PROJECT_SRC))
 
 from aos import update_particles_aos
@@ -20,6 +21,7 @@ class TestParticleOptimization(unittest.TestCase):
     def test_aos_and_soa_are_equivalent(self) -> None:
         aos, soa = generate_particle_data(n=1000, seed=7)
 
+        # Both versions should produce the same final values.
         aos_result = update_particles_aos(
             particles=deepcopy(aos),
             steps=10,
@@ -43,6 +45,7 @@ class TestParticleOptimization(unittest.TestCase):
         aos, soa = generate_particle_data(n=100, seed=3)
         original_x = soa["x"].copy()
 
+        # A few steps should change the particle positions.
         update_particles_soa(
             particles=soa,
             steps=5,
